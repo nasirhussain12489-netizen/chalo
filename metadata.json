@@ -1,0 +1,6 @@
+{
+  "name": "ILM - Integrated Learning Master",
+  "description": "Premium educational management platform featuring U1-U6 class isolation, automatic competition poster generation, moderated class feeds, digital libraries, and permanent official weekly results.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

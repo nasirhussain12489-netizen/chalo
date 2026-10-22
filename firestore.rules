@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    function isSuperAdmin() {
+      return isAuthenticated() &&
+        (request.auth.token.email == "nasirhussain12489@gmail.com" ||
+         request.auth.token.email == "nasirhussin12489@gmail.com") &&
+        request.auth.token.email_verified == true;
+    }
+    function isValidAdminSession(data) {
+      return data.keys().hasAll(['uid', 'email', 'name', 'role']) &&
+        data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
+        data.email is string && data.email.size() > 3 && data.email.size() < 160 &&
+        data.name is string && data.name.size() > 0 && data.name.size() < 120 &&
+        (data.role == 'SUPER_ADMIN' || data.role == 'CLASS_ADMIN');
+    }
+    match /adminSessions/{uid} {
+      allow read: if isOwner(uid) || isSuperAdmin();
+      allow create, update: if (isOwner(uid) || isSuperAdmin()) && isValidAdminSession(request.resource.data);
+      allow delete: if isSuperAdmin();
+    }
+  }
+}
